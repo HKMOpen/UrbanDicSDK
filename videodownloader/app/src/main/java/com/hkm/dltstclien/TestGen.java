@@ -10,7 +10,11 @@ import android.widget.ImageButton;
 
 import com.hkm.dltstclien.monkeyTest.testBasic;
 import com.hkm.vdlsdk.client.FBdownNet;
+import com.hkm.vdlsdk.client.SoundCloud;
 import com.hkm.vdlsdk.model.urban.Term;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import retrofit.Call;
 
@@ -51,12 +55,19 @@ public class TestGen extends testBasic {
     @Override
     protected void run_bind_program_start() {
         clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+//https://soundcloud.com/heskemo/sets/onepiecemusic
+        //"https://www.facebook.com/shanghaiist/videos/10153940669221030/"
+        final String t1 = "https://soundcloud.com/adealin/one-piece-epic-battle-theme";
 
-        field1.setText("https://www.facebook.com/shanghaiist/videos/10153940669221030/");
+
+        field1.setText(t1);
         client = FBdownNet.getInstance(getActivity());
+
+        final SoundCloud sndClient = SoundCloud.newInstance(getActivity());
         copy_current.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (console.getText().toString().isEmpty()) return;
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", console.getText().toString());
                 clipboard.setPrimaryClip(clip);
             }
@@ -74,6 +85,8 @@ public class TestGen extends testBasic {
                 if (field1.getText().toString().isEmpty())
                     return;
 
+                progress();
+                /*
                 client.getVideoUrl(
                         field1.getText().toString(),
                         new FBdownNet.fbdownCB() {
@@ -89,11 +102,44 @@ public class TestGen extends testBasic {
                                 addMessage(why);
                             }
                         }
-                );
+                );*/
+
+                sndClient.pullFromUrl(field1.getText().toString(), new SoundCloud.Callback() {
+                    @Override
+                    public void success(LinkedHashMap<String, String> result) {
+                        addMessage("====success====");
+                        addMessage("resquest has result of " + result.size());
+                        Iterator<String> iel = result.values().iterator();
+                        while (iel.hasNext()) {
+                            String el = iel.next();
+                            addMessage(el);
+
+                        }
+                        enableall();
+                    }
+
+                    @Override
+                    public void failture(String why) {
+                        addMessage("========error=========");
+                        addMessage(why);
+                        enableall();
+                    }
+                });
 
             }
         });
     }
 
+    private void enableall() {
+        betterCircleBar.setVisibility(View.GONE);
+        b1.setEnabled(true);
+        b2.setEnabled(true);
+    }
+
+    private void progress() {
+        betterCircleBar.setVisibility(View.VISIBLE);
+        b1.setEnabled(false);
+        b2.setEnabled(false);
+    }
 
 }

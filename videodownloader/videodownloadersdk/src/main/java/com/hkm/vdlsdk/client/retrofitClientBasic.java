@@ -28,7 +28,7 @@ public abstract class retrofitClientBasic {
     protected Gson gsonsetup;
     protected Interceptor interceptor;
     protected HttpLoggingInterceptor loglevel;
-
+    protected okhttp3.OkHttpClient client3 = new okhttp3.OkHttpClient();
 
     public retrofitClientBasic(Context context) {
         setContext(context);

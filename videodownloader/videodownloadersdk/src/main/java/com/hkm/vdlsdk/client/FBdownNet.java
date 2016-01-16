@@ -5,8 +5,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.hkm.vdlsdk.Constant;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -35,6 +33,11 @@ public class FBdownNet extends retrofitClientBasic {
         void success(String answer);
 
         void failture(String why);
+    }
+
+    @Override
+    protected String getBaseEndpoint() {
+        return "http://www.fbdown.net";
     }
 
     private interface workerService {
@@ -71,11 +74,6 @@ public class FBdownNet extends retrofitClientBasic {
         }
     }
 
-
-    @Override
-    protected String getBaseEndpoint() {
-        return Constant.SRC_FB_VIDEO;
-    }
 
     private workerService createService() {
         return api.create(workerService.class);
@@ -133,38 +131,33 @@ public class FBdownNet extends retrofitClientBasic {
             cb = callback;
         }
 
-        OkHttpClient client = new OkHttpClient();
+
 
         @Override
         protected Void doInBackground(String[] params) {
             try {
                 final String connection_url = params[0];
-                //  String text = Jsoup.connect(params[0]).execute().body();
-                //  String safe = Jsoup.clean(text, new Whitelist());
 
                 Request request = new Request.Builder()
                         .url(connection_url)
                         .build();
-                okhttp3.Call call = client.newCall(request);
+                okhttp3.Call call = client3.newCall(request);
                 okhttp3.Response response = call.execute();
                 ResponseBody body = response.body();
 
-                //   Document d = Jsoup.parse(body.string());
-                //   success = d.select("#mInlineVideoPlayer").attr("src").toLowerCase();
                 final String solve = body.string();
-                final String getTagVideoPartial = "\\/(.*?)(.*)(=F)";
+                final String getTagVideoPartial = "\\/video_redirect(.*?)(.*)(=F)";
 
                 Pattern pattern = Pattern.compile(getTagVideoPartial);
                 Matcher matcher = pattern.matcher(solve);
                 if (matcher.find()) {
-                    System.out.println(matcher.group(0));
+
                     Log.d("hackResult", matcher.group(0));
                     success = matcher.group(0);
                 }
-                // Document d = Jsoup.parse(body.string());
-                //  Document doc = response.parse();
-                //  System.out.print(doc);
-                // System.out.println(response.body().string());
+
+                success = "https://m.facebook.com" + success;
+
             } catch (IOException e) {
                 cb.failture(e.getLocalizedMessage());
             }
@@ -193,7 +186,7 @@ public class FBdownNet extends retrofitClientBasic {
                             String endpath = h.select("a[href^=\"v.php\"]").attr("href").toLowerCase();
 
                             StringBuilder sb = new StringBuilder();
-                            sb.append(Constant.SRC_FB_VIDEO)
+                            sb.append(getBaseEndpoint())
                                     .append("/")
                                     .append(endpath);
 
