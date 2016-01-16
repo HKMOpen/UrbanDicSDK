@@ -29,9 +29,14 @@ public abstract class retrofitClientBasic {
     protected Interceptor interceptor;
     protected HttpLoggingInterceptor loglevel;
     protected okhttp3.OkHttpClient client3 = new okhttp3.OkHttpClient();
+    protected OkHttpClient client2 = new OkHttpClient();
 
     public retrofitClientBasic(Context context) {
         setContext(context);
+        rebuildRetrofit();
+    }
+
+    protected void rebuildRetrofit() {
         jsoncreate();
         createLogLevel();
         createIntercept();
@@ -67,10 +72,11 @@ public abstract class retrofitClientBasic {
     protected abstract String getBaseEndpoint();
 
     protected OkHttpClient createClient() {
-        OkHttpClient http = new OkHttpClient();
-        http.interceptors().add(interceptor);
-        http.interceptors().add(loglevel);
-        return http;
+        client2 = new OkHttpClient();
+        client2.interceptors().add(interceptor);
+        client2.interceptors().add(loglevel);
+        client2.setFollowRedirects(true);
+        return client2;
     }
 
     protected void createLogLevel() {
@@ -89,7 +95,7 @@ public abstract class retrofitClientBasic {
     }
 
     protected Request.Builder universal_header(Request.Builder chain) {
-        chain.addHeader("Accept", "application/json");
+        // chain.addHeader("Accept", "application/json");
         return chain;
     }
 

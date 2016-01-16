@@ -58,9 +58,8 @@ public class TestGen extends testBasic {
 //https://soundcloud.com/heskemo/sets/onepiecemusic
         //"https://www.facebook.com/shanghaiist/videos/10153940669221030/"
         final String t1 = "https://soundcloud.com/adealin/one-piece-epic-battle-theme";
-
-
-        field1.setText(t1);
+        final String t2 = "https://soundcloud.com/heskemo/sets/songngn";
+        field1.setText(t2);
         client = FBdownNet.getInstance(getActivity());
 
         final SoundCloud sndClient = SoundCloud.newInstance(getActivity());
@@ -112,6 +111,7 @@ public class TestGen extends testBasic {
                         Iterator<String> iel = result.values().iterator();
                         while (iel.hasNext()) {
                             String el = iel.next();
+                            addMessage("track =========================");
                             addMessage(el);
 
                         }

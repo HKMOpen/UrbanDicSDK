@@ -4,12 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.squareup.okhttp.OkHttpClient;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookiePolicy;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -20,17 +24,16 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
-import retrofit.http.GET;
-import retrofit.http.Headers;
 import retrofit.http.POST;
-import retrofit.http.Query;
 
 /**
  * Created by zJJ on 1/17/2016.
  */
 public class SoundCloud extends retrofitClientBasic {
     private Call<String> mCall;
-    private String task_destination;
+    private String task_destination, csrftoken = "";
+    private static final String FIELD_TOKEN = "csrfmiddlewaretoken";
+    private boolean isSingleTrack = true;
 
     public interface Callback {
         void success(LinkedHashMap<String, String> result);
@@ -43,21 +46,26 @@ public class SoundCloud extends retrofitClientBasic {
         return "http://9soundclouddownloader.com/";
     }
 
-    private interface workerService {
-        @Headers({
-                "Accept: charset=UTF-8"
-        })
-        @FormUrlEncoded
-        @POST("/download-playlist")
-        Call<String> getMp3(
-                @Field("csrfmiddlewaretoken") final String token,
-                @Field("playlist-url") final String fburl);
-
-        @GET("/story.php")
-        Call<String> getvideo(@Query("story_fbid") final String fburl, @Query("id") final String id);
+    private String listEndPoint() {
+        return "http://9soundclouddownloader.com/playlist-downloader";
     }
 
-    private static final String FIELD_TOKEN = "csrfmiddlewaretoken";
+    private interface workerService {
+        @FormUrlEncoded
+        @POST("/download-playlist")
+        Call<String> getMp3List(
+                @Field(FIELD_TOKEN) final String token,
+                @Field("playlist-url") final String h);
+
+        @FormUrlEncoded
+        @POST("/download-sound-track")
+        Call<String> getMp3Track(
+                @Field(FIELD_TOKEN) final String token,
+                @Field("sound-url") final String h);
+
+    }
+
+
     private static SoundCloud static_instance;
 
     public SoundCloud(Context c) {
@@ -94,6 +102,7 @@ public class SoundCloud extends retrofitClientBasic {
             cb.failture("Wrong starting domain");
             return;
         }
+        isSingleTrack = sound_url_checker.getPathSegments().contains("sets") ? false : true;
         task_destination = urlFromSoundCloud;
         taskGetToken h = new taskGetToken(cb);
         h.execute();
@@ -111,8 +120,7 @@ public class SoundCloud extends retrofitClientBasic {
         protected String doInBackground(Void... params) {
             try {
                 Request request = new Request.Builder()
-                        .url(getBaseEndpoint())
-
+                        .url(isSingleTrack ? getBaseEndpoint() : listEndPoint())
                         .build();
                 okhttp3.Call call = client3.newCall(request);
                 okhttp3.Response response = call.execute();
@@ -130,9 +138,10 @@ public class SoundCloud extends retrofitClientBasic {
                 if (token.equalsIgnoreCase("")) {
                     throw new IOException("token did not get");
                 }
+
                 return token;
             } catch (IOException e) {
-                cb.failture(e.getLocalizedMessage());
+                cb.failture("Operational error:" + e.getMessage());
             }
             return null;
         }
@@ -141,8 +150,10 @@ public class SoundCloud extends retrofitClientBasic {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            csrftoken = s;
+            rebuildRetrofit();
             workerService w = createService();
-            mCall = w.getMp3(s, task_destination);
+            mCall = isSingleTrack ? w.getMp3Track(s, task_destination) : w.getMp3List(s, task_destination);
             mCall.enqueue(new retrofit.Callback<String>() {
                 @Override
                 public void onResponse(Response<String> response, Retrofit retrofit) {
@@ -181,5 +192,20 @@ public class SoundCloud extends retrofitClientBasic {
         }
     }
 
+    @Override
+    protected com.squareup.okhttp.Request.Builder universal_header(com.squareup.okhttp.Request.Builder chain) {
+        chain.addHeader("Cookie", "csrftoken=" + csrftoken);
+        chain.addHeader("Accept", "charset=UTF-8");
+        chain.addHeader("Content-Type", "text/html; charset=utf-8");
+        return super.universal_header(chain);
+    }
 
+    @Override
+    protected OkHttpClient createClient() {
+        // enable cookies
+        java.net.CookieManager cookieManager = new java.net.CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        CookieHandler.setDefault(cookieManager);
+        return super.createClient();
+    }
 }
