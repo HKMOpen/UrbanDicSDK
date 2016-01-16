@@ -1,4 +1,4 @@
-package com.hkm.testclienturbandictionary;
+package com.hkm.dltstclien;
 
 import org.junit.Test;
 

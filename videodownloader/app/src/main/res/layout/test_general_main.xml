@@ -27,7 +27,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/console_product_id"
+            android:id="@+id/console_field_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -36,11 +36,11 @@
             android:singleLine="true" />
 
         <EditText
-            android:id="@+id/product_quantity"
+            android:id="@+id/console_field_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:inputType="number"
             android:singleLine="true"
             android:text="1" />
@@ -60,16 +60,16 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/check_out_at_item"
+                android:id="@+id/getv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add to Cart" />
+                android:text="Get Video" />
 
             <Button
-                android:id="@+id/login_button"
+                android:id="@+id/exit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Log In Page" />
+                android:text="--exit--" />
 
 
         </LinearLayout>

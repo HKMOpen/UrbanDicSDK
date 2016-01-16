@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.heckdo.dl_test_client"
+        applicationId "com.hkm.dltstchlien"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
@@ -17,6 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+
 }
 
 dependencies {
@@ -26,4 +31,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.greysonparrelli.permiso:permiso:0.1.1'
     compile project(':videodownloadersdk')
+    compile 'com.jakewharton:butterknife:5.1.1'
 }
