@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hkm.vdlsdk.Constant;
 import com.hkm.vdlsdk.gson.GsonFactory;
-import com.hkm.vdlsdk.gson.GsonStringConverterFactory;
+import com.hkm.vdlsdk.gson.ToStringConverter;
 import com.hkm.vdlsdk.gson.WordpressConversion;
 import com.hkm.vdlsdk.realm.RealmExclusion;
 import com.squareup.okhttp.Interceptor;
@@ -59,15 +59,14 @@ public abstract class retrofitClientBasic {
         // Add the interceptor to OkHttpClient
         api = new Retrofit.Builder()
                 .baseUrl(getBaseEndpoint())
-                        // .addConverterFactory(GsonConverterFactory.create(gsonsetup))
-                .addConverterFactory(new GsonStringConverterFactory())
+                .addConverterFactory(new ToStringConverter())
                 .client(createClient())
                 .build();
     }
 
     protected abstract String getBaseEndpoint();
 
-    private OkHttpClient createClient() {
+    protected OkHttpClient createClient() {
         OkHttpClient http = new OkHttpClient();
         http.interceptors().add(interceptor);
         http.interceptors().add(loglevel);

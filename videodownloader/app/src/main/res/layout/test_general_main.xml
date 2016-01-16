@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
 
     <ScrollView
         android:id="@id/scrollviewconsole"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="5dp">
+        android:layout_height="400dp">
 
         <TextView
             android:id="@id/console_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:scrollbars="vertical"
+            android:selectAllOnFocus="true"
             android:singleLine="false"
             android:textSize="15sp" />
     </ScrollView>
@@ -22,28 +22,26 @@
     <LinearLayout
         android:id="@id/input_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_below="@id/scrollviewconsole"
         android:orientation="horizontal">
 
         <EditText
             android:id="@+id/console_field_1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:inputType="number"
+            android:inputType="textUri"
             android:singleLine="true" />
 
-        <EditText
-            android:id="@+id/console_field_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="5"
-            android:inputType="number"
-            android:singleLine="true"
-            android:text="1" />
+        <ImageButton
+            android:id="@+id/copy_current"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_bookmark" />
     </LinearLayout>
 
 
@@ -66,10 +64,10 @@
                 android:text="Get Video" />
 
             <Button
-                android:id="@+id/exit"
+                android:id="@+id/paste"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="--exit--" />
+                android:text="--Paste--" />
 
 
         </LinearLayout>

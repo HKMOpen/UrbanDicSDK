@@ -29,4 +29,9 @@ public class GsonFactory {
             return (TypeAdapter<T>) new MissingCharacterConversion();
         }
     }
+
+
+
+
+
 }
