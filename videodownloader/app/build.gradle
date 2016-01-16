@@ -1,10 +1,11 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
     defaultConfig {
+        applicationId "com.heckdo.dl_test_client"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
@@ -22,16 +23,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-
-    provided 'com.google.code.gson:gson:2.4'
-    compile 'org.jsoup:jsoup:1.8.3'
-    compile 'io.realm:realm-android:0.87.0'
-
-    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
-    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-    compile 'com.squareup.okhttp:okhttp:2.3.0'
-    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
-    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.greysonparrelli.permiso:permiso:0.1.1'
+    compile project(':videodownloadersdk')
 }
-
-apply from: 'br.gradle'
